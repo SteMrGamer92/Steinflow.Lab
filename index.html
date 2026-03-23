@@ -1,11 +1,187 @@
 <!DOCTYPE html>
-<html>
-<head><title>SteinFlow.Lab Games</title>
-<style>/* stesso stile cyberpunk */</style>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SteinFlow.Lab - Solitaire Pulse</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-color: #073B3A;
+            --card-bg: rgba(30, 77, 82, 0.85);
+            --accent-yellow: #FFE600;
+            --accent-green: #37FFB4;
+            --text-white: #FFFFFF;
+            --glass-border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(55, 255, 180, 0.05) 0%, transparent 40%),
+                radial-gradient(circle at 80% 70%, rgba(255, 230, 0, 0.05) 0%, transparent 40%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-white);
+            overflow-x: hidden;
+            padding: 2rem;
+        }
+
+        /* Pattern di semi delle carte in background */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23ffffff' fill-opacity='0.03' fill-rule='evenodd'%3E%3Cpath d='M30 10c-2.2 0-4 1.8-4 4 0 2 2.5 5 4 6 1.5-1 4-4 4-6 0-2.2-1.8-4-4-4zm0 30c2.2 0 4-1.8 4-4 0-2-2.5-5-4-6-1.5 1-4 4-4 6 0 2.2 1.8 4 4 4zM10 30c0 2.2 1.8 4 4 4 2 0 5-2.5 6-4-1-1.5-4-4-4-4-2.2 0-4 1.8-4 4zm40 0c0-2.2-1.8-4-4-4-2 0-5 2.5-6 4 1 1.5 4 4 4 4 2.2 0 4-1.8 4-4z'/%3E%3C/g%3E%3C/svg%3E");
+            z-index: -1;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 450px;
+            text-align: center;
+            animation: fadeIn 0.8s ease-out;
+        }
+
+        .game-icon {
+            width: 180px;
+            height: 180px;
+            border-radius: 40px;
+            object-fit: cover;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 20px rgba(55, 255, 180, 0.2);
+            margin-bottom: 1.5rem;
+            border: 3px solid var(--glass-border);
+            transition: transform 0.3s ease;
+        }
+
+        .game-icon:hover {
+            transform: scale(1.05) translateY(-5px);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 900;
+            color: var(--accent-yellow);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 2.5rem;
+            text-shadow: 0 0 15px rgba(255, 230, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        h1::before, h1::after {
+            content: "◆";
+            font-size: 1.2rem;
+            color: rgba(255, 230, 0, 0.4);
+        }
+
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 1.2rem;
+        }
+
+        .link-card {
+            background: var(--card-bg);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            border-radius: 20px;
+            padding: 1.2rem;
+            text-decoration: none;
+            color: var(--text-white);
+            font-weight: 700;
+            font-size: 1.1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .link-card:hover {
+            transform: translateY(-3px);
+            background: rgba(30, 77, 82, 0.95);
+            border-color: var(--accent-green);
+            box-shadow: 0 10px 25px rgba(55, 255, 180, 0.15);
+        }
+
+        .link-card::after {
+            content: "OFFICIAL PAGE";
+            position: absolute;
+            background: rgba(0, 0, 0, 0.3);
+            font-size: 0.7rem;
+            padding: 4px 10px;
+            border-radius: 10px;
+            right: 1.2rem;
+            letter-spacing: 1px;
+            color: rgba(255, 255, 255, 0.6);
+            transition: color 0.3s;
+        }
+
+        .link-card:hover::after {
+            color: var(--accent-green);
+        }
+
+        .link-icon {
+            font-size: 1.4rem;
+            margin-right: 15px;
+        }
+
+        .footer {
+            margin-top: 3rem;
+            font-size: 0.9rem;
+            opacity: 0.6;
+            letter-spacing: 1px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Mobile adjustments */
+        @media (max-width: 480px) {
+            h1 { font-size: 2rem; }
+            .game-icon { width: 140px; height: 140px; }
+        }
+    </style>
 </head>
 <body>
-<h1>Solitaire Pulse</h1>
-<a href="https://steinflowlab.itch.io/solitaire-pulse"> Itch.io</a>
-<a href="https://gamejolt.com/games/solitarepulse/1051936"> Game Jolt</a>
+    <div class="container">
+        <img src="icon.png" alt="Solitaire Pulse Icon" class="game-icon">
+        <h1>Solitaire Pulse</h1>
+        
+        <div class="links">
+            <a href="https://steinflowlab.itch.io/solitaire-pulse" class="link-card" target="_blank">
+                <span>Itch.io</span>
+            </a>
+            <a href="https://gamejolt.com/games/solitarepulse/1051936" class="link-card" target="_blank">
+                <span>Game Jolt</span>
+            </a>
+        </div>
+
+        <div class="footer">
+            &copy; 2026 STEINFLOW.LAB
+        </div>
+    </div>
 </body>
 </html>
