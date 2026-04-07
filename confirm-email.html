@@ -82,14 +82,56 @@
     <div class="card">
         <div class="logo">
             <h1>Solitaire Pulse</h1>
-            <p>Verifica account</p>
+            <p data-i18n="verifyAccount">Verifica account</p>
         </div>
         <div id="icon" class="icon">⏳</div>
-        <div id="msg" class="msg info">Verifica in corso...</div>
+        <div id="msg" class="msg info" data-i18n="verifying">Verifica in corso...</div>
         <p id="subtitle" class="subtitle"></p>
     </div>
 
     <script>
+        // --- LOCALIZATION (i18n) ---
+        const translations = {
+            en: {
+                verifyAccount: "Verify account",
+                verifying: "Verifying...",
+                invalidLink: "Invalid link. Request a new confirmation email from the app.",
+                expiredLink: "Invalid or expired link. Request a new confirmation email from the app.",
+                emailUpdated: "✓ Email updated successfully!",
+                emailUpdatedSubtitle: "You can return to the app.",
+                accountConfirmed: "✓ Account confirmed! Welcome to Solitaire Pulse.",
+                accountConfirmedSubtitle: "You can return to the app and log in."
+            },
+            it: {
+                verifyAccount: "Verifica account",
+                verifying: "Verifica in corso...",
+                invalidLink: "Link non valido. Richiedi una nuova email di conferma dalla app.",
+                expiredLink: "Link non valido o scaduto. Richiedi una nuova email di conferma dalla app.",
+                emailUpdated: "✓ Email aggiornata con successo!",
+                emailUpdatedSubtitle: "Puoi tornare alla app.",
+                accountConfirmed: "✓ Account confermato! Benvenuto in Solitaire Pulse.",
+                accountConfirmedSubtitle: "Puoi tornare alla app e fare il login."
+            }
+        }
+
+        // Detect browser language
+        const browserLang = navigator.language.slice(0, 2)
+        const currentLang = ['en', 'it'].includes(browserLang) ? browserLang : 'en'
+        const t = translations[currentLang]
+
+        // Apply translations
+        function applyTranslations() {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n')
+                if (t[key]) el.textContent = t[key]
+            })
+        }
+
+        applyTranslations()
+
+        // Update document language
+        document.documentElement.lang = currentLang
+
         const SUPABASE_URL  = 'https://ipqxjudlxcqacgtmpkzx.supabase.co'
         const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImlwcXhqdWRseGNxYWNndG1wa3p4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTkxMjY1NzksImV4cCI6MjA3NDcwMjU3OX0.ojU2aniXnbL1w5xZjDgewVJo5sMPNHXz-0_wgXaNd1E'
 
@@ -113,7 +155,7 @@
             const type      = params.get('type') // 'email' per signup, 'email_change' per cambio email
 
             if (!tokenHash || !type) {
-                showResult('❌', 'Link non valido. Richiedi una nuova email di conferma dalla app.', 'error')
+                showResult('❌', t.invalidLink, 'error')
                 return
             }
 
@@ -123,14 +165,14 @@
             })
 
             if (error) {
-                showResult('❌', 'Link non valido o scaduto. Richiedi una nuova email di conferma dalla app.', 'error', error.message)
+                showResult('❌', t.expiredLink, 'error', error.message)
                 return
             }
 
             if (type === 'email_change') {
-                showResult('✓', 'Email aggiornata con successo!', 'success', 'Puoi tornare alla app.')
+                showResult('✓', t.emailUpdated, 'success', t.emailUpdatedSubtitle)
             } else {
-                showResult('✓', 'Account confermato! Benvenuto in Solitaire Pulse.', 'success', 'Puoi tornare alla app e fare il login.')
+                showResult('✓', t.accountConfirmed, 'success', t.accountConfirmedSubtitle)
             }
         }
 
